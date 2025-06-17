@@ -7,6 +7,7 @@ import os
 import json
 import random
 import re
+import time
 from typing import Dict, Any, Optional
 from llama_index.llms.gemini import Gemini
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
@@ -14,6 +15,9 @@ from llama_index.core import Settings
 from llama_index.embeddings.gemini import GeminiEmbedding
 from llama_index.core.tools import FunctionTool
 from llama_index.core.agent import ReActAgent
+
+# Import chat relay utilities
+from util import notify_human_agent, check_human_response
 
 # Configuration
 GOOGLE_API_KEY = "AIzaSyBe8ug7iYqjbHkzotoS-WMihTxNqebwX9I"
@@ -44,10 +48,13 @@ query_engine = load_knowledge_base()
 
 # Initialize session state
 if "routing_status" not in st.session_state:
-    st.session_state.routing_status = {"routed_to_human": False, "ticket_id": None}
+    st.session_state.routing_status = {"routed_to_human": False, "ticket_id": None, "awaiting_human": False}
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
+
+if "last_human_check" not in st.session_state:
+    st.session_state.last_human_check = 0
 
 def route_to_human_agent(
     customer_query: str,
@@ -57,44 +64,87 @@ def route_to_human_agent(
 ) -> str:
     """
     Route customer query to human agent when AI cannot handle the request.
-    
+
     Args:
         customer_query: The original customer question/complaint
         reason: Why the query needs human attention
         priority: Priority level (low, medium, high, urgent)
         department: Which department should handle this (general, medical, billing, claims)
-    
+
     Returns:
         Confirmation message with ticket details
     """
     # Generate a ticket ID
     ticket_id = f"PHML-{random.randint(10000, 99999)}"
-    
+
     # Update routing status
     st.session_state.routing_status["routed_to_human"] = True
     st.session_state.routing_status["ticket_id"] = ticket_id
-    
-    # Log the routing information
-    routing_info = {
-        "ticket_id": ticket_id,
-        "customer_query": customer_query,
-        "reason": reason,
+    st.session_state.routing_status["awaiting_human"] = True
+
+    # Prepare customer information
+    customer_info = {
         "priority": priority,
         "department": department,
-        "status": "routed_to_human"
+        "reason": reason,
+        "original_query": customer_query
     }
-    
-    # Display routing information in Streamlit
-    st.info(f"""
-    🎫 **ROUTING TO HUMAN AGENT** 🎫
-    
-    **Ticket ID:** {ticket_id}
-    **Department:** {department}
-    **Priority:** {priority}
-    **Reason:** {reason}
-    """)
-    
-    return f"I've created ticket {ticket_id} and routed your request to our {department} team with {priority} priority. A human agent will contact you shortly regarding your PHML healthcare inquiry."
+
+    # Send to human agent via chat relay
+    try:
+        result = notify_human_agent(ticket_id, customer_query, customer_info)
+        if result["success"]:
+            # Display routing information in Streamlit
+            st.info(f"""
+            🎫 **ROUTING TO HUMAN AGENT** 🎫
+
+            **Ticket ID:** {ticket_id}
+            **Department:** {department}
+            **Priority:** {priority}
+            **Reason:** {reason}
+
+            ✅ Successfully sent to human agent team
+            """)
+
+            return f"I've created ticket {ticket_id} and routed your request to our {department} team with {priority} priority. A human agent will contact you shortly regarding your PHML healthcare inquiry."
+        else:
+            st.error(f"Failed to route to human agent: {result.get('error', 'Unknown error')}")
+            return f"I've created ticket {ticket_id} but encountered an issue routing to our human team. Please contact us directly if you need immediate assistance."
+
+    except Exception as e:
+        st.error(f"Error routing to human agent: {str(e)}")
+        return f"I've created ticket {ticket_id} but encountered a technical issue. Please contact us directly for immediate assistance."
+
+def check_for_human_response() -> Optional[str]:
+    """
+    Check if there's a response from human agent for the current ticket.
+
+    Returns:
+        Human response message if available, None otherwise
+    """
+    if not st.session_state.routing_status["routed_to_human"]:
+        return None
+
+    ticket_id = st.session_state.routing_status["ticket_id"]
+    if not ticket_id:
+        return None
+
+    try:
+        result = check_human_response(ticket_id)
+        if result["success"] and result["response"]:
+            # Mark as no longer awaiting human response
+            st.session_state.routing_status["awaiting_human"] = False
+
+            response_data = result["response"]
+            agent_info = response_data.get("agent_info", {})
+            agent_name = agent_info.get("name", "Human Agent")
+
+            return f"**{agent_name} from PHML Support:**\n\n{response_data['message']}"
+
+    except Exception as e:
+        st.error(f"Error checking for human response: {str(e)}")
+
+    return None
 
 def search_phml_knowledge(query: str) -> str:
     """
@@ -193,10 +243,24 @@ def analyze_query_complexity(query: str) -> Dict[str, Any]:
 
 def handle_customer_query(query: str) -> str:
     """Handle customer query with routing capability"""
-    
-    # Check if already routed to human
-    if st.session_state.routing_status["routed_to_human"]:
-        return f"Your request has already been routed to a human agent (Ticket: {st.session_state.routing_status['ticket_id']}). Please wait for them to contact you."
+
+    # Check for human response first if we're awaiting one
+    if st.session_state.routing_status["awaiting_human"]:
+        human_response = check_for_human_response()
+        if human_response:
+            return human_response
+
+    # Check if already routed to human and still awaiting response
+    if st.session_state.routing_status["routed_to_human"] and st.session_state.routing_status["awaiting_human"]:
+        # Check periodically for human response (every 10 seconds)
+        current_time = time.time()
+        if current_time - st.session_state.last_human_check > 10:
+            st.session_state.last_human_check = current_time
+            human_response = check_for_human_response()
+            if human_response:
+                return human_response
+
+        return f"Your request has been routed to a human agent (Ticket: {st.session_state.routing_status['ticket_id']}). Please wait for their response..."
     
     # Analyze query complexity
     analysis = analyze_query_complexity(query)
@@ -258,10 +322,27 @@ with st.sidebar:
     """)
 
     if st.session_state.routing_status["routed_to_human"]:
-        st.warning(f"🎫 Active Ticket: {st.session_state.routing_status['ticket_id']}")
+        ticket_id = st.session_state.routing_status['ticket_id']
+        awaiting = st.session_state.routing_status.get("awaiting_human", False)
+
+        if awaiting:
+            st.warning(f"🎫 Active Ticket: {ticket_id}\n⏳ Awaiting human response...")
+            if st.button("Check for Response"):
+                human_response = check_for_human_response()
+                if human_response:
+                    st.success("✅ Human response received!")
+                    # Add the response to chat history
+                    st.session_state.messages.append({"role": "assistant", "content": human_response})
+                    st.rerun()
+                else:
+                    st.info("No response yet. Please wait...")
+        else:
+            st.success(f"🎫 Ticket: {ticket_id}\n✅ Human response received")
+
         if st.button("Reset Session"):
-            st.session_state.routing_status = {"routed_to_human": False, "ticket_id": None}
+            st.session_state.routing_status = {"routed_to_human": False, "ticket_id": None, "awaiting_human": False}
             st.session_state.messages = []
+            st.session_state.last_human_check = 0
             st.rerun()
 
 # Display chat messages from history on app rerun

@@ -11,6 +11,11 @@ google-ai-generativelanguage>=0.6.0
 # Additional LlamaIndex components
 llama-index-readers-file>=0.1.0
 
+# Flask dependencies for chat relay system
+flask>=2.3.0
+flask-cors>=4.0.0
+requests>=2.31.0
+
 # Core Python dependencies
 numpy>=1.24.0
 pandas>=2.0.0
