@@ -41,7 +41,6 @@ def start_ai_agent():
     try:
         subprocess.run([
             sys.executable, "-m", "streamlit", "run", "phml_agent.py",
-            "--server.port", "8501",
             "--server.headless", "true"
         ], check=True)
     except subprocess.CalledProcessError as e:
@@ -55,7 +54,6 @@ def start_human_agent():
     try:
         subprocess.run([
             sys.executable, "-m", "streamlit", "run", "human_agent_ui.py",
-            "--server.port", "8502",
             "--server.headless", "true"
         ], check=True)
     except subprocess.CalledProcessError as e:
