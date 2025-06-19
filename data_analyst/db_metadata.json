@@ -1,0 +1,139 @@
+{
+  "tables": [
+    {
+      "table_name": "health_insurance_data",
+      "columns": [
+        {
+          "name": "Policy_ID",
+          "type": "TEXT",
+          "notnull": false,
+          "default_value": null,
+          "is_primary_key": false
+        },
+        {
+          "name": "Age",
+          "type": "INTEGER",
+          "notnull": false,
+          "default_value": null,
+          "is_primary_key": false
+        },
+        {
+          "name": "Gender",
+          "type": "TEXT",
+          "notnull": false,
+          "default_value": null,
+          "is_primary_key": false
+        },
+        {
+          "name": "BMI",
+          "type": "REAL",
+          "notnull": false,
+          "default_value": null,
+          "is_primary_key": false
+        },
+        {
+          "name": "Smoking_Status",
+          "type": "TEXT",
+          "notnull": false,
+          "default_value": null,
+          "is_primary_key": false
+        },
+        {
+          "name": "Region",
+          "type": "TEXT",
+          "notnull": false,
+          "default_value": null,
+          "is_primary_key": false
+        },
+        {
+          "name": "Diabetes",
+          "type": "TEXT",
+          "notnull": false,
+          "default_value": null,
+          "is_primary_key": false
+        },
+        {
+          "name": "Preexisting_Conditions",
+          "type": "INTEGER",
+          "notnull": false,
+          "default_value": null,
+          "is_primary_key": false
+        },
+        {
+          "name": "Children",
+          "type": "INTEGER",
+          "notnull": false,
+          "default_value": null,
+          "is_primary_key": false
+        },
+        {
+          "name": "Annual_Premium",
+          "type": "REAL",
+          "notnull": false,
+          "default_value": null,
+          "is_primary_key": false
+        },
+        {
+          "name": "Claimed_This_Year",
+          "type": "TEXT",
+          "notnull": false,
+          "default_value": null,
+          "is_primary_key": false
+        },
+        {
+          "name": "Chronic_Disease_Score",
+          "type": "REAL",
+          "notnull": false,
+          "default_value": null,
+          "is_primary_key": false
+        }
+      ],
+      "total_columns": 12,
+      "total_rows": 150,
+      "sample_rows": [
+        {
+          "Policy_ID": "POL100000",
+          "Age": 56,
+          "Gender": "Male",
+          "BMI": 28.7,
+          "Smoking_Status": "Non-smoker",
+          "Region": "South",
+          "Diabetes": "No",
+          "Preexisting_Conditions": 1,
+          "Children": 4,
+          "Annual_Premium": 17339.48,
+          "Claimed_This_Year": "No",
+          "Chronic_Disease_Score": 7.67
+        },
+        {
+          "Policy_ID": "POL100001",
+          "Age": 69,
+          "Gender": "Female",
+          "BMI": 27.0,
+          "Smoking_Status": "Non-smoker",
+          "Region": "West",
+          "Diabetes": "No",
+          "Preexisting_Conditions": 0,
+          "Children": 0,
+          "Annual_Premium": 2637.6,
+          "Claimed_This_Year": "No",
+          "Chronic_Disease_Score": 6.15
+        },
+        {
+          "Policy_ID": "POL100002",
+          "Age": 46,
+          "Gender": "Male",
+          "BMI": 30.8,
+          "Smoking_Status": "Smoker",
+          "Region": "South",
+          "Diabetes": "No",
+          "Preexisting_Conditions": 2,
+          "Children": 4,
+          "Annual_Premium": 7922.92,
+          "Claimed_This_Year": "No",
+          "Chronic_Disease_Score": 14.38
+        }
+      ]
+    }
+  ]
+}

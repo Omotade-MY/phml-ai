@@ -1,0 +1,322 @@
+{
+  "from_ai": [
+    {
+      "ticket_id": "PHML-36604",
+      "message": "transfer me to a human agent",
+      "timestamp": "2025-06-19T01:47:36.267896",
+      "customer_info": {
+        "priority": "medium",
+        "department": "general",
+        "reason": "User requested to be transferred to a human agent",
+        "original_query": "transfer me to a human agent"
+      },
+      "status": "pending_human_response"
+    },
+    {
+      "ticket_id": "PHML-90457",
+      "message": "I am having issues with changing my HCP",
+      "timestamp": "2025-06-19T01:49:13.961326",
+      "customer_info": {
+        "priority": "medium",
+        "department": "general",
+        "reason": "Customer is experiencing difficulties with changing their Healthcare Provider (HCP), which falls under provider network issues or enrollment difficulties.",
+        "original_query": "I am having issues with changing my HCP"
+      },
+      "status": "pending_human_response"
+    },
+    {
+      "ticket_id": "PHML-81257",
+      "message": "Connect me to a human agent",
+      "timestamp": "2025-06-19T01:58:32.707899",
+      "customer_info": {
+        "priority": "medium",
+        "department": "general",
+        "reason": "User requested to be connected to a human agent",
+        "original_query": "Connect me to a human agent"
+      },
+      "status": "pending_human_response"
+    },
+    {
+      "ticket_id": "PHML-78303",
+      "message": "I have a terrible experience with a hospital last week",
+      "timestamp": "2025-06-19T02:00:17.479712",
+      "customer_info": {
+        "priority": "medium",
+        "department": "general",
+        "reason": "Customer complaint about service quality with a hospital.",
+        "original_query": "I have a terrible experience with a hospital last week"
+      },
+      "status": "pending_human_response"
+    },
+    {
+      "ticket_id": "PHML-92237",
+      "message": "I need to speak with an agent",
+      "timestamp": "2025-06-19T02:10:28.772330",
+      "customer_info": {
+        "priority": "medium",
+        "department": "general",
+        "reason": "User requested to speak with a human agent.",
+        "original_query": "I need to speak with an agent"
+      },
+      "status": "pending_human_response"
+    },
+    {
+      "ticket_id": "PHML-92237",
+      "message": "I had a terrible experience at a hospital last week",
+      "timestamp": "2025-06-19T02:12:13.830885",
+      "customer_info": {
+        "type": "followup_message",
+        "message": "I had a terrible experience at a hospital last week",
+        "timestamp": "2025-06-19 02:12:11"
+      },
+      "status": "pending_human_response"
+    },
+    {
+      "ticket_id": "PHML-92237",
+      "message": "This happened on a Monday morning at the Baye District Hospital. I had to wait over 4 hours before I can be attend to and I was really feeling weak hungry and almost colapsing",
+      "timestamp": "2025-06-19T02:19:48.775326",
+      "customer_info": {
+        "type": "followup_message",
+        "message": "This happened on a Monday morning at the Baye District Hospital. I had to wait over 4 hours before I can be attend to and I was really feeling weak hungry and almost colapsing",
+        "timestamp": "2025-06-19 02:19:46"
+      },
+      "status": "pending_human_response"
+    },
+    {
+      "ticket_id": "PHML-92237",
+      "message": "Hello",
+      "timestamp": "2025-06-19T02:34:39.447233",
+      "customer_info": {
+        "type": "followup_message",
+        "message": "Hello",
+        "timestamp": "2025-06-19 02:34:37"
+      },
+      "status": "pending_human_response"
+    },
+    {
+      "ticket_id": "PHML-60601",
+      "message": "connect me eith a human agent",
+      "timestamp": "2025-06-19T09:47:39.282204",
+      "customer_info": {
+        "priority": "medium",
+        "department": "general",
+        "reason": "User requested to speak with a human agent.",
+        "original_query": "connect me eith a human agent"
+      },
+      "status": "pending_human_response"
+    },
+    {
+      "ticket_id": "PHML-36756",
+      "message": "connect me to a human agent",
+      "timestamp": "2025-06-19T10:15:35.915427",
+      "customer_info": {
+        "priority": "medium",
+        "department": "general",
+        "reason": "User requested to speak to a human agent.",
+        "original_query": "connect me to a human agent"
+      },
+      "status": "pending_human_response"
+    },
+    {
+      "ticket_id": "PHML-36756",
+      "message": "Alright",
+      "timestamp": "2025-06-19T10:18:16.976426",
+      "customer_info": {
+        "type": "followup_message",
+        "message": "Alright",
+        "timestamp": "2025-06-19 10:18:14"
+      },
+      "status": "pending_human_response"
+    },
+    {
+      "ticket_id": "PHML-36756",
+      "message": "Alright",
+      "timestamp": "2025-06-19T10:21:40.961601",
+      "customer_info": {
+        "type": "followup_message",
+        "message": "Alright",
+        "timestamp": "2025-06-19 10:21:38"
+      },
+      "status": "pending_human_response"
+    },
+    {
+      "ticket_id": "PHML-36756",
+      "message": "Ok",
+      "timestamp": "2025-06-19T10:21:52.410469",
+      "customer_info": {
+        "type": "followup_message",
+        "message": "Ok",
+        "timestamp": "2025-06-19 10:21:50"
+      },
+      "status": "pending_human_response"
+    },
+    {
+      "ticket_id": "PHML-36756",
+      "message": "This",
+      "timestamp": "2025-06-19T10:24:50.141037",
+      "customer_info": {
+        "type": "followup_message",
+        "message": "This",
+        "timestamp": "2025-06-19 10:24:48"
+      },
+      "status": "pending_human_response"
+    },
+    {
+      "ticket_id": "PHML-36756",
+      "message": "Hello",
+      "timestamp": "2025-06-19T10:32:02.207497",
+      "customer_info": {
+        "type": "followup_message",
+        "message": "Hello",
+        "timestamp": "2025-06-19 10:32:00"
+      },
+      "status": "pending_human_response"
+    },
+    {
+      "ticket_id": "PHML-36756",
+      "message": "alright",
+      "timestamp": "2025-06-19T10:49:55.035806",
+      "customer_info": {
+        "type": "followup_message",
+        "message": "alright",
+        "timestamp": "2025-06-19 10:49:52"
+      },
+      "status": "pending_human_response"
+    },
+    {
+      "ticket_id": "PHML-47736",
+      "message": "alright",
+      "timestamp": "2025-06-19T10:49:57.116838",
+      "customer_info": {
+        "priority": "high",
+        "department": "technical",
+        "reason": "System error: There are multiple `component_instance` elements with the same auto-generated ID. When this element is created, it is assigned an internal ID based on the element type and provided parameters. Multiple elements with the same type and parameters will cause this error.\n\nTo fix this error, please pass a unique `key` argument to the `component_instance` element.",
+        "original_query": "alright"
+      },
+      "status": "pending_human_response"
+    }
+  ],
+  "from_human": [
+    {
+      "ticket_id": "PHML-36604",
+      "message": "Hi, My name is Muhammad. How may I help you",
+      "timestamp": "2025-06-19T01:48:23.026540",
+      "agent_info": {
+        "name": "Muhammad",
+        "department": "General Support"
+      },
+      "status": "sent_to_customer"
+    },
+    {
+      "ticket_id": "PHML-90457",
+      "message": "Oh, what is it about?\nPlease provide more details",
+      "timestamp": "2025-06-19T01:50:11.393856",
+      "agent_info": {
+        "name": "Muhammad",
+        "department": "General Support"
+      },
+      "status": "sent_to_customer"
+    },
+    {
+      "ticket_id": "PHML-81257",
+      "message": "How may I help you",
+      "timestamp": "2025-06-19T01:59:18.421661",
+      "agent_info": {
+        "name": "Muhammad",
+        "department": "General Support"
+      },
+      "status": "sent_to_customer"
+    },
+    {
+      "ticket_id": "PHML-78303",
+      "message": "Oh really So sorry to hear that, please provide more details, the hospotital , your experience and others",
+      "timestamp": "2025-06-19T02:09:37.530755",
+      "agent_info": {
+        "name": "Muhammad",
+        "department": "General Support"
+      },
+      "status": "sent_to_customer"
+    },
+    {
+      "ticket_id": "PHML-92237",
+      "message": "Hi, please tell us your complaint",
+      "timestamp": "2025-06-19T02:11:17.815617",
+      "agent_info": {
+        "name": "Muhammad",
+        "department": "General Support"
+      },
+      "status": "sent_to_customer"
+    },
+    {
+      "ticket_id": "PHML-92237",
+      "message": "I am so so sorry to hear this, could you please describe what was your experience like and which hospital was this and at what time exactly",
+      "timestamp": "2025-06-19T02:17:56.995345",
+      "agent_info": {
+        "name": "Muhammad",
+        "department": "General Support"
+      },
+      "status": "sent_to_customer"
+    },
+    {
+      "ticket_id": "PHML-60601",
+      "message": "hello, my name is muhammad. How may I help  you",
+      "timestamp": "2025-06-19T09:49:11.729638",
+      "agent_info": {
+        "name": "Muhammad",
+        "department": "General Support"
+      },
+      "status": "sent_to_customer"
+    }
+  ],
+  "tickets": {
+    "PHML-36604": {
+      "created_at": "2025-06-19T01:47:36.267896",
+      "status": "human_responded",
+      "message_count": 1,
+      "last_activity": "2025-06-19T01:48:23.026540"
+    },
+    "PHML-90457": {
+      "created_at": "2025-06-19T01:49:13.961326",
+      "status": "human_responded",
+      "message_count": 1,
+      "last_activity": "2025-06-19T01:50:11.393856"
+    },
+    "PHML-81257": {
+      "created_at": "2025-06-19T01:58:32.707899",
+      "status": "human_responded",
+      "message_count": 1,
+      "last_activity": "2025-06-19T01:59:18.421661"
+    },
+    "PHML-78303": {
+      "created_at": "2025-06-19T02:00:17.479712",
+      "status": "human_responded",
+      "message_count": 1,
+      "last_activity": "2025-06-19T02:09:37.530755"
+    },
+    "PHML-92237": {
+      "created_at": "2025-06-19T02:10:28.772330",
+      "status": "human_responded",
+      "message_count": 4,
+      "last_activity": "2025-06-19T02:34:39.447233"
+    },
+    "PHML-60601": {
+      "created_at": "2025-06-19T09:47:39.282204",
+      "status": "human_responded",
+      "message_count": 1,
+      "last_activity": "2025-06-19T09:49:11.729638"
+    },
+    "PHML-36756": {
+      "created_at": "2025-06-19T10:15:35.915427",
+      "status": "active",
+      "message_count": 7,
+      "last_activity": "2025-06-19T10:49:55.035806"
+    },
+    "PHML-47736": {
+      "created_at": "2025-06-19T10:49:57.116838",
+      "status": "active",
+      "message_count": 1,
+      "last_activity": "2025-06-19T10:49:57.116838"
+    }
+  },
+  "agents": {}
+}

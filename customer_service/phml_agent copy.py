@@ -1,7 +1,7 @@
 import streamlit as st
 
 # Streamlit page config MUST be first
-st.set_page_config(page_title="PHML Agent", page_icon="🏥", layout="wide")
+st.set_page_config(page_title="PHML Agent", page_icon="🏥", layout="wide", initial_sidebar_state="expanded")
 
 import os
 import json
@@ -19,13 +19,20 @@ from llama_index.core.agent import ReActAgent
 # Import chat relay utilities
 from util import notify_human_agent, check_human_response
 
-# Configuration
-GOOGLE_API_KEY = "AIzaSyBe8ug7iYqjbHkzotoS-WMihTxNqebwX9I"
-os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
+
+
+
+if not os.environ.get("GOOGLE_API_KEY"):
+    st.warning("Please provide your Google API key. You can get it from https://aistudio.google.com/apikey")
+    st.session_state.api_key = st.text_input("Google API Key", type="password")
+    os.environ["GOOGLE_API_KEY"] = st.session_state.get("api_key")
+    st.stop()
+else:
+    GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 
 # Initialize LLM and embedding model
 llm = Gemini(
-    model="models/gemini-1.5-flash",
+    model="models/gemini-2.5-flash-preview-05-20",
     api_key=GOOGLE_API_KEY,
 )
 
@@ -55,6 +62,15 @@ if "messages" not in st.session_state:
 
 if "last_human_check" not in st.session_state:
     st.session_state.last_human_check = 0
+
+if "auto_refresh" not in st.session_state:
+    st.session_state.auto_refresh = True
+
+if "refresh_interval" not in st.session_state:
+    st.session_state.refresh_interval = 5  # seconds
+
+if "last_refresh_time" not in st.session_state:
+    st.session_state.last_refresh_time = 0
 
 def route_to_human_agent(
     customer_query: str,
@@ -92,21 +108,23 @@ def route_to_human_agent(
 
     # Send to human agent via chat relay
     try:
+        st.session_state.ticket_id = ticket_id
         result = notify_human_agent(ticket_id, customer_query, customer_info)
         if result["success"]:
             # Display routing information in Streamlit
-            st.info(f"""
-            🎫 **ROUTING TO HUMAN AGENT** 🎫
+            with st.container():
+                st.info(f"""
+                🎫 **ROUTING TO HUMAN AGENT** 🎫
 
-            **Ticket ID:** {ticket_id}
-            **Department:** {department}
-            **Priority:** {priority}
-            **Reason:** {reason}
+                **Ticket ID:** {ticket_id}
+                **Department:** {department}
+                **Priority:** {priority}
+                **Reason:** {reason}
 
-            ✅ Successfully sent to human agent team
-            """)
+                ✅ Successfully sent to human agent team
+                """)
 
-            return f"I've created ticket {ticket_id} and routed your request to our {department} team with {priority} priority. A human agent will contact you shortly regarding your PHML healthcare inquiry."
+            return f"I've created ticket {ticket_id} and routed your request to our {department} team with {priority} priority. A human agent will respond shortly regarding your PHML healthcare inquiry."
         else:
             st.error(f"Failed to route to human agent: {result.get('error', 'Unknown error')}")
             return f"I've created ticket {ticket_id} but encountered an issue routing to our human team. Please contact us directly if you need immediate assistance."
@@ -115,12 +133,43 @@ def route_to_human_agent(
         st.error(f"Error routing to human agent: {str(e)}")
         return f"I've created ticket {ticket_id} but encountered a technical issue. Please contact us directly for immediate assistance."
 
-def check_for_human_response() -> Optional[str]:
+def forward_message_to_human(message: str, ticket_id: str) -> str:
+    """
+    Forward user message to human agent under existing ticket.
+    
+    Args:
+        message: User's message to forward
+        ticket_id: Existing ticket ID
+        
+    Returns:
+        Confirmation message
+    """
+    try:
+        # Prepare message data for forwarding
+        message_data = {
+            "type": "followup_message",
+            "message": message,
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+        }
+        
+        # Use the same notify_human_agent function but mark as followup
+        result = notify_human_agent(ticket_id, message, message_data)
+        
+        if result["success"]:
+            return f"✉️ **Message forwarded to human agent** (Ticket: {ticket_id})\n\nYour message has been sent to the human agent handling your case. They will respond shortly."
+        else:
+            return f"❌ **Error forwarding message** (Ticket: {ticket_id})\n\nThere was an issue sending your message. Please try again or contact support directly."
+            
+    except Exception as e:
+        st.error(f"Error forwarding message: {str(e)}")
+        return f"❌ **Error forwarding message** (Ticket: {ticket_id})\n\nTechnical error occurred. Please contact support directly."
+
+def check_for_human_response() -> Optional[Dict]:
     """
     Check if there's a response from human agent for the current ticket.
 
     Returns:
-        Human response message if available, None otherwise
+        Dictionary with response info if available, None otherwise
     """
     if not st.session_state.routing_status["routed_to_human"]:
         return None
@@ -132,19 +181,43 @@ def check_for_human_response() -> Optional[str]:
     try:
         result = check_human_response(ticket_id)
         if result["success"] and result["response"]:
-            # Mark as no longer awaiting human response
-            st.session_state.routing_status["awaiting_human"] = False
-
             response_data = result["response"]
             agent_info = response_data.get("agent_info", {})
             agent_name = agent_info.get("name", "Human Agent")
+            timestamp = response_data.get("timestamp", "")
 
-            return f"**{agent_name} from PHML Support:**\n\n{response_data['message']}"
+            return {
+                "message": response_data['message'],
+                "agent_name": agent_name,
+                "timestamp": timestamp,
+                "raw_response": response_data
+            }
 
     except Exception as e:
         st.error(f"Error checking for human response: {str(e)}")
 
     return None
+
+def handle_human_response_received(response_info: Dict):
+    """Handle when a human response is received"""
+    # Mark as no longer awaiting human response (but keep routed_to_human True)
+    st.session_state.routing_status["awaiting_human"] = False
+    
+    # Format the human response message
+    formatted_message = f"**👤 {response_info['agent_name']} from PHML Support:**\n\n{response_info['message']}"
+    
+    # Add to chat history
+    st.session_state.messages.append({
+        "role": "assistant", 
+        "content": formatted_message,
+        "is_human_response": True,
+        "agent_info": response_info
+    })
+    
+    # Show success notification
+    st.success(f"✅ Response received from {response_info['agent_name']}!")
+    
+    return formatted_message
 
 def search_phml_knowledge(query: str) -> str:
     """
@@ -203,7 +276,7 @@ ROUTING GUIDELINES:
 - Provide clear reason for routing
 - Once routed, do NOT continue the conversation - let human take over
 
-Respose Guidelines:
+Response Guidelines:
 
 - ALWAYS try to use the search_phml_knowledge tool at FIRST to find relevant information.
 - Provide helpful, accurate responses about PHML services
@@ -228,7 +301,7 @@ def analyze_query_complexity(query: str) -> Dict[str, Any]:
     
     medical_keywords = [
         "diagnosis", "treatment", "medication", "surgery", "hospital admission",
-        "specialist", "referral", "medical records", "test results"
+        "specialist", "refer", "medical records", "test results", 'human agent'
     ]
     
     query_lower = query.lower()
@@ -246,25 +319,13 @@ def analyze_query_complexity(query: str) -> Dict[str, Any]:
 
 def handle_customer_query(query: str) -> str:
     """Handle customer query with routing capability"""
-
-    # Check for human response first if we're awaiting one
-    if st.session_state.routing_status["awaiting_human"]:
-        human_response = check_for_human_response()
-        if human_response:
-            return human_response
-
-    # Check if already routed to human and still awaiting response
-    if st.session_state.routing_status["routed_to_human"] and st.session_state.routing_status["awaiting_human"]:
-        # Check periodically for human response (every 10 seconds)
-        current_time = time.time()
-        if current_time - st.session_state.last_human_check > 10:
-            st.session_state.last_human_check = current_time
-            human_response = check_for_human_response()
-            if human_response:
-                return human_response
-
-        return f"Your request has been routed to a human agent (Ticket: {st.session_state.routing_status['ticket_id']}). Please wait for their response..."
     
+    # CRITICAL CHECK: If already routed to human, forward message directly
+    if st.session_state.routing_status["routed_to_human"]:
+        ticket_id = st.session_state.routing_status["ticket_id"]
+        return forward_message_to_human(query, ticket_id)
+    
+    # Only proceed with AI processing if NOT routed to human
     # Analyze query complexity
     analysis = analyze_query_complexity(query)
     
@@ -292,6 +353,20 @@ def handle_customer_query(query: str) -> str:
             "technical"
         )
 
+# Auto-refresh functionality
+def auto_refresh_check():
+    """Check for human responses if auto-refresh is enabled"""
+    if (st.session_state.auto_refresh and 
+        st.session_state.routing_status["awaiting_human"] and
+        time.time() - st.session_state.last_refresh_time > st.session_state.refresh_interval):
+        
+        st.session_state.last_refresh_time = time.time()
+        human_response = check_for_human_response()
+        
+        if human_response:
+            handle_human_response_received(human_response)
+            st.rerun()
+
 # Streamlit UI
 st.title("🏥 PHML Agent - Your Healthcare Assistant")
 st.markdown("""
@@ -307,7 +382,7 @@ I'm your AI assistant powered by ReAct agent technology, here to help with:
 For complex or sensitive matters, I can intelligently connect you with a human agent.
 """)
 
-# Sidebar with information
+# Sidebar with information and controls
 with st.sidebar:
     st.header("About PHML")
     st.markdown("""
@@ -324,37 +399,116 @@ with st.sidebar:
     🎫 **Smart Routing**: Human escalation
     """)
 
+    # Human Agent Status Section
+    st.header("Human Agent Status")
+    
     if st.session_state.routing_status["routed_to_human"]:
         ticket_id = st.session_state.routing_status['ticket_id']
         awaiting = st.session_state.routing_status.get("awaiting_human", False)
 
+        st.info(f"🎫 **Ticket:** {ticket_id}")
+        
         if awaiting:
-            st.warning(f"🎫 Active Ticket: {ticket_id}\n⏳ Awaiting human response...")
-            if st.button("Check for Response"):
-                human_response = check_for_human_response()
-                if human_response:
-                    st.success("✅ Human response received!")
-                    # Add the response to chat history
-                    st.session_state.messages.append({"role": "assistant", "content": human_response})
-                    st.rerun()
-                else:
-                    st.info("No response yet. Please wait...")
+            st.warning("⏳ **Awaiting human response...**")
         else:
-            st.success(f"🎫 Ticket: {ticket_id}\n✅ Human response received")
-
-        if st.button("Reset Session"):
+            st.success("💬 **Connected to human agent**")
+            st.caption("All messages are being forwarded to your assigned agent")
+            
+        # Auto-refresh controls (only show when awaiting)
+        if awaiting:
+            st.subheader("🔄 Refresh Settings")
+            st.session_state.auto_refresh = st.checkbox(
+                "Auto-refresh for responses", 
+                value=st.session_state.auto_refresh,
+                help="Automatically check for human responses"
+            )
+            
+            if st.session_state.auto_refresh:
+                st.session_state.refresh_interval = st.slider(
+                    "Refresh interval (seconds)", 
+                    min_value=3, 
+                    max_value=30, 
+                    value=st.session_state.refresh_interval,
+                    help="How often to check for responses"
+                )
+                
+                # Show countdown until next refresh
+                time_until_next = st.session_state.refresh_interval - (time.time() - st.session_state.last_refresh_time)
+                if time_until_next > 0:
+                    st.caption(f"Next auto-check in: {int(time_until_next)}s")
+        
+        # Manual refresh button
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🔄 Check Now", use_container_width=True):
+                with st.spinner("Checking for response..."):
+                    human_response = check_for_human_response()
+                    if human_response:
+                        handle_human_response_received(human_response)
+                        st.rerun()
+                    else:
+                        st.info("No new response yet")
+        
+        with col2:
+            if st.button("📞 Call Support", use_container_width=True):
+                st.info("📞 PHML Support: +234-XXX-XXXX")
+                    
+        # Reset session button
+        if st.button("🔄 Start New Session", use_container_width=True):
             st.session_state.routing_status = {"routed_to_human": False, "ticket_id": None, "awaiting_human": False}
             st.session_state.messages = []
             st.session_state.last_human_check = 0
+            st.session_state.last_refresh_time = 0
+            st.success("Session reset!")
             st.rerun()
+    else:
+        st.success("🤖 **AI Agent Active**")
+        st.caption("Ready to help with your PHML inquiries")
 
-# Display chat messages from history on app rerun
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+    # Connection status
+    st.header("System Status")
+    try:
+        # You could add a health check to your relay server here
+        st.success("🟢 Connected to PHML systems")
+    except:
+        st.error("🔴 Connection issue - please try again")
 
-# Chat input
-prompt = st.chat_input("Ask me about PHML services, benefits, or any healthcare questions...")
+# Auto-refresh check (runs on every app cycle)
+if st.session_state.routing_status["awaiting_human"]:
+    auto_refresh_check()
+
+# Main chat interface
+chat_container = st.container()
+
+# Display chat messages from history
+with chat_container:
+    for i, message in enumerate(st.session_state.messages):
+        with st.chat_message(message["role"]):
+            # Add special styling for human responses
+            if message.get("is_human_response", False):
+                st.markdown("---")
+                st.markdown("**👤 HUMAN AGENT RESPONSE**")
+                st.markdown("---")
+            
+            st.markdown(message["content"])
+            
+            # Add timestamp for human responses
+            if message.get("is_human_response", False) and message.get("agent_info"):
+                agent_info = message["agent_info"]
+                if agent_info.get("timestamp"):
+                    st.caption(f"Received: {agent_info['timestamp']}")
+
+# Chat input - show different states based on routing status
+if st.session_state.routing_status["routed_to_human"]:
+    if st.session_state.routing_status["awaiting_human"]:
+        st.info("💬 **Chat with Human Agent** - Your messages will be forwarded to the assigned human agent.")
+        prompt = st.chat_input("Type your message to the human agent...")
+    else:
+        st.info("💬 **Connected to Human Agent** - Continue your conversation. All messages go directly to your assigned agent.")
+        prompt = st.chat_input("Continue chatting with your human agent...")
+else:
+    # Normal chat input
+    prompt = st.chat_input("Ask me about PHML services, benefits, or any healthcare questions...")
 
 if prompt:
     # Display user message
@@ -362,9 +516,9 @@ if prompt:
         st.markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Get agent response
+    # Get response (either from agent or forward to human)
     with st.chat_message("assistant"):
-        with st.spinner("🤖 PHML Agent is thinking..."):
+        with st.spinner("Processing your message..."):
             try:
                 response = handle_customer_query(prompt)
                 st.markdown(response)
@@ -381,3 +535,16 @@ if prompt:
 
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": response})
+
+# Add JavaScript for auto-refresh (if needed for more responsive updates)
+if st.session_state.auto_refresh and st.session_state.routing_status["awaiting_human"]:
+    st.markdown(
+        f"""
+        <script>
+        setTimeout(function(){{
+            window.location.reload();
+        }}, {st.session_state.refresh_interval * 1000});
+        </script>
+        """,
+        unsafe_allow_html=True
+    )

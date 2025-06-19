@@ -7,6 +7,7 @@ llama-index-embeddings-gemini>=0.1.0
 # Google AI dependencies
 google-generativeai>=0.7.0
 google-ai-generativelanguage>=0.6.0
+google-genai==1.21.0
 
 # Additional LlamaIndex components
 llama-index-readers-file>=0.1.0
@@ -24,3 +25,12 @@ pydantic>=2.0.0
 typing-extensions>=4.5.0
 
 
+
+openpyxl>=3.1.0
+xlrd>=2.0.0
+plotly>=5.15.0
+
+
+# Analystst
+langchain-core==0.3.65
+langgraph==0.4.8

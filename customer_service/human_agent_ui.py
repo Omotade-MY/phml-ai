@@ -150,6 +150,31 @@ def display_ticket_details(ticket_id: str, message_data: Dict):
                 st.session_state.selected_ticket = None
                 st.rerun()
 
+def group_messages_by_ticket(messages: List[Dict]) -> Dict[str, Dict]:
+    """Group messages by ticket ID to avoid duplicates and get latest info"""
+    grouped = {}
+    
+    for msg in messages:
+        ticket_id = msg.get("ticket_id", f"Unknown-{len(grouped)}")
+        
+        # If this ticket already exists, update with latest information
+        if ticket_id in grouped:
+            # Keep the most recent message or merge information as needed
+            existing = grouped[ticket_id]
+            current_time = msg.get("timestamp", "")
+            existing_time = existing.get("timestamp", "")
+            
+            # Use the message with the latest timestamp, or current if no timestamps
+            if not existing_time or (current_time and current_time > existing_time):
+                grouped[ticket_id] = msg
+                # Add a message count if there were multiple messages
+                grouped[ticket_id]["message_count"] = existing.get("message_count", 1) + 1
+        else:
+            grouped[ticket_id] = msg
+            grouped[ticket_id]["message_count"] = 1
+    
+    return grouped
+
 def display_message_queue():
     """Display the main message queue"""
     st.header("📬 Customer Message Queue")
@@ -181,15 +206,18 @@ def display_message_queue():
         st.info("🎉 No pending messages! All customers have been helped.")
         return
     
-    st.write(f"**{len(pending_messages)} pending message(s)**")
+    # Group messages by ticket ID to avoid duplicates
+    grouped_messages = group_messages_by_ticket(pending_messages)
+    
+    st.write(f"**{len(grouped_messages)} unique ticket(s) with {len(pending_messages)} total message(s)**")
     
     # Display messages in a table-like format
-    for i, msg in enumerate(pending_messages):
-        ticket_id = msg.get("ticket_id", f"Unknown-{i}")
+    for ticket_id, msg in grouped_messages.items():
         customer_info = msg.get("customer_info", {})
         timestamp = msg.get("timestamp", "")
+        message_count = msg.get("message_count", 1)
         
-        # Create a card for each message
+        # Create a card for each ticket
         with st.container():
             col1, col2, col3, col4 = st.columns([2, 2, 2, 1])
             
@@ -198,6 +226,9 @@ def display_message_queue():
                 if timestamp:
                     time_str = datetime.fromisoformat(timestamp).strftime("%H:%M:%S")
                     st.caption(f"⏰ {time_str}")
+                # Show message count if there are multiple messages
+                if message_count > 1:
+                    st.caption(f"📬 {message_count} messages")
             
             with col2:
                 priority = customer_info.get("priority", "medium")
@@ -209,7 +240,9 @@ def display_message_queue():
                 st.write(f"📂 {department.title()}")
             
             with col4:
-                if st.button("View", key=f"view_{ticket_id}"):
+                # Use a unique key that includes timestamp or index to avoid duplicates
+                unique_key = f"view_{ticket_id}_{hash(str(msg))}"
+                if st.button("View", key=unique_key):
                     st.session_state.selected_ticket = (ticket_id, msg)
                     st.rerun()
             
@@ -218,6 +251,11 @@ def display_message_queue():
             if len(msg.get("message", "")) > 100:
                 message_preview += "..."
             st.caption(f"💬 {message_preview}")
+            
+            # Show if this is a follow-up message
+            message_type = msg.get("type", "")
+            if message_type == "followup_message":
+                st.caption("🔄 Follow-up message")
             
             st.divider()
 
@@ -250,6 +288,31 @@ def main():
             st.session_state.agent_info = {"name": "", "department": "", "logged_in": False}
             st.session_state.selected_ticket = None
             st.rerun()
+        
+        # Add statistics in sidebar
+        st.markdown("---")
+        st.markdown("### 📊 Queue Stats")
+        try:
+            pending_messages = get_pending_messages()
+            grouped_messages = group_messages_by_ticket(pending_messages)
+            
+            st.metric("Unique Tickets", len(grouped_messages))
+            st.metric("Total Messages", len(pending_messages))
+            
+            # Priority breakdown
+            priority_counts = {}
+            for msg in grouped_messages.values():
+                priority = msg.get("customer_info", {}).get("priority", "medium")
+                priority_counts[priority] = priority_counts.get(priority, 0) + 1
+            
+            if priority_counts:
+                st.markdown("**Priority Breakdown:**")
+                for priority, count in priority_counts.items():
+                    priority_emoji = {"low": "🟢", "medium": "🟡", "high": "🟠", "urgent": "🔴"}
+                    st.write(f"{priority_emoji.get(priority, '⚪')} {priority.title()}: {count}")
+                    
+        except Exception as e:
+            st.error(f"Error loading stats: {str(e)}")
     
     # Main content area
     if st.session_state.selected_ticket:

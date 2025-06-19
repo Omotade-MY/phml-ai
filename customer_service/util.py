@@ -1,13 +1,18 @@
 import requests
 from typing import Dict, Any, Optional
 import logging
+from google import genai
+from google.genai import types
+import wave
+import streamlit as st
+import os
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Chat relay configuration
-CHAT_RELAY_BASE_URL = "http://localhost:5005"
+CHAT_RELAY_BASE_URL = st.secrets["CHAT_RELAY_BASE_URL"] or "http://localhost:5005"
 
 def notify_human_agent(ticket_id: str, message: str, customer_info: Optional[Dict] = None) -> Dict[str, Any]:
     """
@@ -127,3 +132,73 @@ def check_human_response(ticket_id: str) -> Dict[str, Any]:
                 return {"success": True, "response": message}
 
     return {"success": True, "response": None}
+
+
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+if not GOOGLE_API_KEY:
+    st.warning("Please set your GOOGLE_API_KEY in the environment variables.")
+else:
+    client = genai.Client(api_key=GOOGLE_API_KEY)
+
+# Set up the wave file to save the output:
+class TextToSpeech:
+  def __init__(self, api_key):
+    self.client = genai.Client(api_key=api_key)
+
+  def generate_audio(self, text="Have a wonderful day!", file_name='out.wav'):
+    response = client.models.generate_content(
+      model="gemini-2.5-flash-preview-tts",
+      contents=text,
+      config=types.GenerateContentConfig(
+          response_modalities=["AUDIO"],
+          speech_config=types.SpeechConfig(
+            voice_config=types.VoiceConfig(
+                prebuilt_voice_config=types.PrebuiltVoiceConfig(
+                  voice_name='Charon',
+                )
+            )
+          ),
+      )
+    )
+
+    data = response.candidates[0].content.parts[0].inline_data.data
+    return data
+
+
+  def wave_file(self, filename, pcm, channels=1, rate=24000, sample_width=2):
+      with wave.open(filename, "wb") as wf:
+          wf.setnchannels(channels)
+          wf.setsampwidth(sample_width)
+          wf.setframerate(rate)
+          wf.writeframes(pcm)
+      return filename
+
+  def text_to_speech(self, text="Have a wonderful day!", file_name='out.wav'):
+    data = self.generate_audio(text)
+    self.wave_file(file_name, data)
+    return file_name
+
+  def speech_to_text(self, file_name='sample_record.m4a'):
+    if isinstance(file_name, str):
+        with open(file_name, 'rb') as f:
+            audio_bytes = f.read()
+        ext = file_name.split('.')[-1]
+    else:
+        if file_name is not None:
+            file_name.seek(0)  # rewind to start in case it was read before
+            audio_bytes = file_name.read()
+        ext = 'mp3'
+   
+    
+    response = client.models.generate_content(
+      model='gemini-2.5-flash',
+      contents=[
+        'Transcribe this audio clip',
+        types.Part.from_bytes(
+          data=audio_bytes,
+          mime_type=f"audio/{ext}",
+        )
+      ]
+    )
+
+    return response.text
