@@ -738,187 +738,187 @@ def auto_refresh_check():
             handle_human_response_received(human_response)
             st.rerun()
 
-# Streamlit UI
-st.title("🏥 PHML Agent - Your Healthcare Assistant")
-st.markdown("""
-**Welcome to Police Health Maintenance Limited (PHML) Customer Service**
+# # Streamlit UI
+# st.title("🏥 PHML Agent - Your Healthcare Assistant")
+# st.markdown("""
+# **Welcome to Police Health Maintenance Limited (PHML) Customer Service**
 
-I'm your AI assistant powered by ReAct agent technology, here to help with:
-- PHML healthcare services and benefits
-- Enrollment and registration questions
-- Claims and billing inquiries
-- Provider network information
-- General healthcare guidance
+# I'm your AI assistant powered by ReAct agent technology, here to help with:
+# - PHML healthcare services and benefits
+# - Enrollment and registration questions
+# - Claims and billing inquiries
+# - Provider network information
+# - General healthcare guidance
 
-For complex or sensitive matters, I can intelligently connect you with a human agent.
-""")
+# For complex or sensitive matters, I can intelligently connect you with a human agent.
+# """)
 
-# Sidebar with information and controls
-with st.sidebar:
-    st.header("About PHML")
-    st.markdown("""
-    **Police Health Maintenance Limited** is Nigeria's number one HMO provider for:
-    - Nigeria Police Force personnel
-    - Their family members
-    - Quality, comprehensive healthcare under GIFSHIP plan
-    """)
+# # Sidebar with information and controls
+# with st.sidebar:
+#     st.header("About PHML")
+#     st.markdown("""
+#     **Police Health Maintenance Limited** is Nigeria's number one HMO provider for:
+#     - Nigeria Police Force personnel
+#     - Their family members
+#     - Quality, comprehensive healthcare under GIFSHIP plan
+#     """)
 
-    st.header("Agent Features")
-    st.markdown("""
-    🤖 **ReAct Agent**: Reasoning + Acting
-    📚 **RAG System**: Knowledge retrieval
-    🎫 **Smart Routing**: Human escalation
-    """)
+#     st.header("Agent Features")
+#     st.markdown("""
+#     🤖 **ReAct Agent**: Reasoning + Acting
+#     📚 **RAG System**: Knowledge retrieval
+#     🎫 **Smart Routing**: Human escalation
+#     """)
 
-    # Human Agent Status Section
-    st.header("Human Agent Status")
+#     # Human Agent Status Section
+#     st.header("Human Agent Status")
     
-    if st.session_state.routing_status["routed_to_human"]:
-        ticket_id = st.session_state.routing_status['ticket_id']
-        awaiting = st.session_state.routing_status.get("awaiting_human", False)
+#     if st.session_state.routing_status["routed_to_human"]:
+#         ticket_id = st.session_state.routing_status['ticket_id']
+#         awaiting = st.session_state.routing_status.get("awaiting_human", False)
 
-        st.info(f"🎫 **Ticket:** {ticket_id}")
+#         st.info(f"🎫 **Ticket:** {ticket_id}")
         
-        if awaiting:
-            st.warning("⏳ **Awaiting human response...**")
-        else:
-            st.success("💬 **Connected to human agent**")
-            st.caption("All messages are being forwarded to your assigned agent")
+#         if awaiting:
+#             st.warning("⏳ **Awaiting human response...**")
+#         else:
+#             st.success("💬 **Connected to human agent**")
+#             st.caption("All messages are being forwarded to your assigned agent")
             
-        # Auto-refresh controls (only show when awaiting)
-        if awaiting:
-            st.subheader("🔄 Refresh Settings")
-            st.session_state.auto_refresh = st.checkbox(
-                "Auto-refresh for responses", 
-                value=st.session_state.auto_refresh,
-                help="Automatically check for human responses"
-            )
+#         # Auto-refresh controls (only show when awaiting)
+#         if awaiting:
+#             st.subheader("🔄 Refresh Settings")
+#             st.session_state.auto_refresh = st.checkbox(
+#                 "Auto-refresh for responses", 
+#                 value=st.session_state.auto_refresh,
+#                 help="Automatically check for human responses"
+#             )
             
-            if st.session_state.auto_refresh:
-                st.session_state.refresh_interval = st.slider(
-                    "Refresh interval (seconds)", 
-                    min_value=3, 
-                    max_value=30, 
-                    value=st.session_state.refresh_interval,
-                    help="How often to check for responses"
-                )
+#             if st.session_state.auto_refresh:
+#                 st.session_state.refresh_interval = st.slider(
+#                     "Refresh interval (seconds)", 
+#                     min_value=3, 
+#                     max_value=30, 
+#                     value=st.session_state.refresh_interval,
+#                     help="How often to check for responses"
+#                 )
                 
-                # Show countdown until next refresh
-                time_until_next = st.session_state.refresh_interval - (time.time() - st.session_state.last_refresh_time)
-                if time_until_next > 0:
-                    st.caption(f"Next auto-check in: {int(time_until_next)}s")
+#                 # Show countdown until next refresh
+#                 time_until_next = st.session_state.refresh_interval - (time.time() - st.session_state.last_refresh_time)
+#                 if time_until_next > 0:
+#                     st.caption(f"Next auto-check in: {int(time_until_next)}s")
         
-        # Manual refresh button
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("🔄 Check Now", use_container_width=True):
-                with st.spinner("Checking for response..."):
-                    human_response = check_for_human_response()
-                    if human_response:
-                        handle_human_response_received(human_response)
-                        st.rerun()
-                    else:
-                        st.info("No new response yet")
+#         # Manual refresh button
+#         col1, col2 = st.columns(2)
+#         with col1:
+#             if st.button("🔄 Check Now", use_container_width=True):
+#                 with st.spinner("Checking for response..."):
+#                     human_response = check_for_human_response()
+#                     if human_response:
+#                         handle_human_response_received(human_response)
+#                         st.rerun()
+#                     else:
+#                         st.info("No new response yet")
         
-        with col2:
-            if st.button("📞 Call Support", use_container_width=True):
-                st.info("📞 PHML Support: +234-XXX-XXXX")
+#         with col2:
+#             if st.button("📞 Call Support", use_container_width=True):
+#                 st.info("📞 PHML Support: +234-XXX-XXXX")
                     
-        # Reset session button
-        if st.button("🔄 Start New Session", use_container_width=True):
-            st.session_state.routing_status = {"routed_to_human": False, "ticket_id": None, "awaiting_human": False}
-            st.session_state.messages = []
-            st.session_state.last_human_check = 0
-            st.session_state.last_refresh_time = 0
-            st.success("Session reset!")
-            st.rerun()
-    else:
-        st.success("🤖 **AI Agent Active**")
-        st.caption("Ready to help with your PHML inquiries")
+#         # Reset session button
+#         if st.button("🔄 Start New Session", use_container_width=True):
+#             st.session_state.routing_status = {"routed_to_human": False, "ticket_id": None, "awaiting_human": False}
+#             st.session_state.messages = []
+#             st.session_state.last_human_check = 0
+#             st.session_state.last_refresh_time = 0
+#             st.success("Session reset!")
+#             st.rerun()
+#     else:
+#         st.success("🤖 **AI Agent Active**")
+#         st.caption("Ready to help with your PHML inquiries")
 
-    # Connection status
-    st.header("System Status")
-    try:
-        # You could add a health check to your relay server here
-        st.success("🟢 Connected to PHML systems")
-    except:
-        st.error("🔴 Connection issue - please try again")
+#     # Connection status
+#     st.header("System Status")
+#     try:
+#         # You could add a health check to your relay server here
+#         st.success("🟢 Connected to PHML systems")
+#     except:
+#         st.error("🔴 Connection issue - please try again")
 
-# Auto-refresh check (runs on every app cycle)
-if st.session_state.routing_status["awaiting_human"]:
-    auto_refresh_check()
+# # Auto-refresh check (runs on every app cycle)
+# if st.session_state.routing_status["awaiting_human"]:
+#     auto_refresh_check()
 
-# Main chat interface
+# # Main chat interface
 chat_container = st.container()
 
-# Display chat messages from history
-with chat_container:
-    for i, message in enumerate(st.session_state.messages):
-        with st.chat_message(message["role"]):
-            # Add special styling for human responses
-            if message.get("is_human_response", False):
-                st.markdown("---")
-                st.markdown("**👤 HUMAN AGENT RESPONSE**")
-                st.markdown("---")
+# # Display chat messages from history
+# with chat_container:
+#     for i, message in enumerate(st.session_state.messages):
+#         with st.chat_message(message["role"]):
+#             # Add special styling for human responses
+#             if message.get("is_human_response", False):
+#                 st.markdown("---")
+#                 st.markdown("**👤 HUMAN AGENT RESPONSE**")
+#                 st.markdown("---")
             
-            st.markdown(message["content"])
+#             st.markdown(message["content"])
             
-            # Add timestamp for human responses
-            if message.get("is_human_response", False) and message.get("agent_info"):
-                agent_info = message["agent_info"]
-                if agent_info.get("timestamp"):
-                    st.caption(f"Received: {agent_info['timestamp']}")
+#             # Add timestamp for human responses
+#             if message.get("is_human_response", False) and message.get("agent_info"):
+#                 agent_info = message["agent_info"]
+#                 if agent_info.get("timestamp"):
+#                     st.caption(f"Received: {agent_info['timestamp']}")
 
-# Chat input - show different states based on routing status
-if st.session_state.routing_status["routed_to_human"]:
-    if st.session_state.routing_status["awaiting_human"]:
-        st.info("💬 **Chat with Human Agent** - Your messages will be forwarded to the assigned human agent.")
-        prompt = st.chat_input("Type your message to the human agent...", key="human_chat_input")
-    else:
-        st.info("💬 **Connected to Human Agent** - Continue your conversation. All messages go directly to your assigned agent.")
-        prompt = st.chat_input("Continue chatting with your human agent...", key="human_chat_input_2")
-else:
-    # Normal chat input
-    prompt = st.chat_input("Ask me about PHML services, benefits, or any healthcare questions...", key="ai_chat_input")
+# # Chat input - show different states based on routing status
+# if st.session_state.routing_status["routed_to_human"]:
+#     if st.session_state.routing_status["awaiting_human"]:
+#         st.info("💬 **Chat with Human Agent** - Your messages will be forwarded to the assigned human agent.")
+#         prompt = st.chat_input("Type your message to the human agent...", key="human_chat_input")
+#     else:
+#         st.info("💬 **Connected to Human Agent** - Continue your conversation. All messages go directly to your assigned agent.")
+#         prompt = st.chat_input("Continue chatting with your human agent...", key="human_chat_input_2")
+# else:
+#     # Normal chat input
+#     prompt = st.chat_input("Ask me about PHML services, benefits, or any healthcare questions...", key="ai_chat_input")
 
-if prompt:
-    # Display user message
-    with st.chat_message("user"):
-        st.markdown(prompt)
-    st.session_state.messages.append({"role": "user", "content": prompt})
+# if prompt:
+#     # Display user message
+#     with st.chat_message("user"):
+#         st.markdown(prompt)
+#     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Get response (either from agent or forward to human)
-    with st.chat_message("assistant"):
-        with st.spinner("Processing your message..."):
-            try:
-                response = handle_customer_query(prompt)
-                st.markdown(response)
-            except Exception as e:
-                st.error(f"I encountered an error processing your request. Let me route you to a human agent.")
-                error_response = route_to_human_agent(
-                    customer_query=prompt,
-                    reason=f"System error: {str(e)}",
-                    priority="high",
-                    department="technical"
-                )
-                st.markdown(error_response)
-                response = error_response
+#     # Get response (either from agent or forward to human)
+#     with st.chat_message("assistant"):
+#         with st.spinner("Processing your message..."):
+#             try:
+#                 response = handle_customer_query(prompt)
+#                 st.markdown(response)
+#             except Exception as e:
+#                 st.error(f"I encountered an error processing your request. Let me route you to a human agent.")
+#                 error_response = route_to_human_agent(
+#                     customer_query=prompt,
+#                     reason=f"System error: {str(e)}",
+#                     priority="high",
+#                     department="technical"
+#                 )
+#                 st.markdown(error_response)
+#                 response = error_response
 
-    # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": response})
+#     # Add assistant response to chat history
+#     st.session_state.messages.append({"role": "assistant", "content": response})
 
-# Add JavaScript for auto-refresh (if needed for more responsive updates)
-if st.session_state.auto_refresh and st.session_state.routing_status["awaiting_human"]:
-    st.markdown(
-        f"""
-        <script>
-        setTimeout(function(){{
-            window.location.reload();
-        }}, {st.session_state.refresh_interval * 1000});
-        </script>
-        """,
-        unsafe_allow_html=True
-    )
+# # Add JavaScript for auto-refresh (if needed for more responsive updates)
+# if st.session_state.auto_refresh and st.session_state.routing_status["awaiting_human"]:
+#     st.markdown(
+#         f"""
+#         <script>
+#         setTimeout(function(){{
+#             window.location.reload();
+#         }}, {st.session_state.refresh_interval * 1000});
+#         </script>
+#         """,
+#         unsafe_allow_html=True
+#     )
 
 import io
 def transcribe_audio(audio_bytes):
@@ -934,9 +934,6 @@ def transcribe_audio(audio_bytes):
     try:
         # Convert bytes to file-like object
         audio_file = io.BytesIO(audio_bytes)
-        
-        # Replace this with your actual transcription function call
-        # For example: transcribed_text = your_transcription_function(audio_file)
         
         # Placeholder - replace with your actual transcription logic
         transcribed_text = txt2spch.speech_to_text(audio_file)
@@ -960,7 +957,7 @@ I'm your AI assistant powered by ReAct agent technology, here to help with:
 - Provider network information
 - General healthcare guidance
 
-For complex or sensitive matters, I can intelligently connect you with a human agent.
+For complex or sensitive matters, You will be connected to a human agent.
 """)
 
 # Sidebar with information and controls
