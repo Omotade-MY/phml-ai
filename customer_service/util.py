@@ -5,6 +5,7 @@ from google import genai
 from google.genai import types
 import wave
 import streamlit as st
+import os
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -133,8 +134,11 @@ def check_human_response(ticket_id: str) -> Dict[str, Any]:
     return {"success": True, "response": None}
 
 
-
-client = genai.Client(api_key="AIzaSyBe8ug7iYqjbHkzotoS-WMihTxNqebwX9I")
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+if not GOOGLE_API_KEY:
+    st.warning("Please set your GOOGLE_API_KEY in the environment variables.")
+else:
+    client = genai.Client(api_key=GOOGLE_API_KEY)
 
 # Set up the wave file to save the output:
 class TextToSpeech:
@@ -175,16 +179,24 @@ class TextToSpeech:
     return file_name
 
   def speech_to_text(self, file_name='sample_record.m4a'):
-    with open(file_name, 'rb') as f:
-      audio_bytes = f.read()
-
+    if isinstance(file_name, str):
+        with open(file_name, 'rb') as f:
+            audio_bytes = f.read()
+        ext = file_name.split('.')[-1]
+    else:
+        if file_name is not None:
+            file_name.seek(0)  # rewind to start in case it was read before
+            audio_bytes = file_name.read()
+        ext = 'mp3'
+   
+    
     response = client.models.generate_content(
       model='gemini-2.5-flash',
       contents=[
         'Transcribe this audio clip',
         types.Part.from_bytes(
           data=audio_bytes,
-          mime_type=f"audio/{file_name.split('.')[-1]}",
+          mime_type=f"audio/{ext}",
         )
       ]
     )
