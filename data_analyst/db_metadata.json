@@ -1,507 +1,137 @@
 {
   "tables": [
     {
-      "table_name": "finalapi",
+      "table_name": "health_insurance_data",
       "columns": [
         {
-          "name": "AGENCY_ID",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "PRIMARY_AGENCY_ID",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "PROD_ABBR",
+          "name": "Policy_ID",
           "type": "TEXT",
           "notnull": false,
           "default_value": null,
           "is_primary_key": false
         },
         {
-          "name": "PROD_LINE",
+          "name": "Age",
+          "type": "INTEGER",
+          "notnull": false,
+          "default_value": null,
+          "is_primary_key": false
+        },
+        {
+          "name": "Gender",
           "type": "TEXT",
           "notnull": false,
           "default_value": null,
           "is_primary_key": false
         },
         {
-          "name": "STATE_ABBR",
+          "name": "BMI",
+          "type": "REAL",
+          "notnull": false,
+          "default_value": null,
+          "is_primary_key": false
+        },
+        {
+          "name": "Smoking_Status",
           "type": "TEXT",
           "notnull": false,
           "default_value": null,
           "is_primary_key": false
         },
         {
-          "name": "STAT_PROFILE_DATE_YEAR",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "RETENTION_POLY_QTY",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "POLY_INFORCE_QTY",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "PREV_POLY_INFORCE_QTY",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "NB_WRTN_PREM_AMT",
-          "type": "REAL",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "WRTN_PREM_AMT",
-          "type": "REAL",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "PREV_WRTN_PREM_AMT",
-          "type": "REAL",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "PRD_ERND_PREM_AMT",
-          "type": "REAL",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "PRD_INCRD_LOSSES_AMT",
-          "type": "REAL",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "MONTHS",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "RETENTION_RATIO",
-          "type": "REAL",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "LOSS_RATIO",
-          "type": "REAL",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "LOSS_RATIO_3YR",
-          "type": "REAL",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "GROWTH_RATE_3YR",
-          "type": "REAL",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "AGENCY_APPOINTMENT_YEAR",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "ACTIVE_PRODUCERS",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "MAX_AGE",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "MIN_AGE",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "VENDOR_IND",
+          "name": "Region",
           "type": "TEXT",
           "notnull": false,
           "default_value": null,
           "is_primary_key": false
         },
         {
-          "name": "VENDOR",
+          "name": "Diabetes",
           "type": "TEXT",
           "notnull": false,
           "default_value": null,
           "is_primary_key": false
         },
         {
-          "name": "PL_START_YEAR",
+          "name": "Preexisting_Conditions",
           "type": "INTEGER",
           "notnull": false,
           "default_value": null,
           "is_primary_key": false
         },
         {
-          "name": "PL_END_YEAR",
+          "name": "Children",
           "type": "INTEGER",
           "notnull": false,
           "default_value": null,
           "is_primary_key": false
         },
         {
-          "name": "COMMISIONS_START_YEAR",
-          "type": "INTEGER",
+          "name": "Annual_Premium",
+          "type": "REAL",
           "notnull": false,
           "default_value": null,
           "is_primary_key": false
         },
         {
-          "name": "COMMISIONS_END_YEAR",
-          "type": "INTEGER",
+          "name": "Claimed_This_Year",
+          "type": "TEXT",
           "notnull": false,
           "default_value": null,
           "is_primary_key": false
         },
         {
-          "name": "CL_START_YEAR",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "CL_END_YEAR",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "ACTIVITY_NOTES_START_YEAR",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "ACTIVITY_NOTES_END_YEAR",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "CL_BOUND_CT_MDS",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "CL_QUO_CT_MDS",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "CL_BOUND_CT_SBZ",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "CL_QUO_CT_SBZ",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "CL_BOUND_CT_eQT",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "CL_QUO_CT_eQT",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "PL_BOUND_CT_ELINKS",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "PL_QUO_CT_ELINKS",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "PL_BOUND_CT_PLRANK",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "PL_QUO_CT_PLRANK",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "PL_BOUND_CT_eQTte",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "PL_QUO_CT_eQTte",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "PL_BOUND_CT_APPLIED",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "PL_QUO_CT_APPLIED",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "PL_BOUND_CT_TRANSACTNOW",
-          "type": "INTEGER",
-          "notnull": false,
-          "default_value": null,
-          "is_primary_key": false
-        },
-        {
-          "name": "PL_QUO_CT_TRANSACTNOW",
-          "type": "INTEGER",
+          "name": "Chronic_Disease_Score",
+          "type": "REAL",
           "notnull": false,
           "default_value": null,
           "is_primary_key": false
         }
       ],
-      "total_columns": 49,
-      "total_rows": 213328,
+      "total_columns": 12,
+      "total_rows": 150,
       "sample_rows": [
         {
-          "AGENCY_ID": 3,
-          "PRIMARY_AGENCY_ID": 3,
-          "PROD_ABBR": "BOILERMACH",
-          "PROD_LINE": "CL",
-          "STATE_ABBR": "IN",
-          "STAT_PROFILE_DATE_YEAR": 2005,
-          "RETENTION_POLY_QTY": 0,
-          "POLY_INFORCE_QTY": 0,
-          "PREV_POLY_INFORCE_QTY": 0,
-          "NB_WRTN_PREM_AMT": 40.0,
-          "WRTN_PREM_AMT": 3074.63,
-          "PREV_WRTN_PREM_AMT": 149.0,
-          "PRD_ERND_PREM_AMT": 3005.77,
-          "PRD_INCRD_LOSSES_AMT": 0.0,
-          "MONTHS": 8,
-          "RETENTION_RATIO": 99999.0,
-          "LOSS_RATIO": 0.0,
-          "LOSS_RATIO_3YR": 99999.0,
-          "GROWTH_RATE_3YR": 99999.0,
-          "AGENCY_APPOINTMENT_YEAR": 1957,
-          "ACTIVE_PRODUCERS": 14,
-          "MAX_AGE": 85,
-          "MIN_AGE": 48,
-          "VENDOR_IND": "N",
-          "VENDOR": "Unknown",
-          "PL_START_YEAR": 99999,
-          "PL_END_YEAR": 99999,
-          "COMMISIONS_START_YEAR": 99999,
-          "COMMISIONS_END_YEAR": 99999,
-          "CL_START_YEAR": 99999,
-          "CL_END_YEAR": 99999,
-          "ACTIVITY_NOTES_START_YEAR": 99999,
-          "ACTIVITY_NOTES_END_YEAR": 99999,
-          "CL_BOUND_CT_MDS": 0,
-          "CL_QUO_CT_MDS": 1,
-          "CL_BOUND_CT_SBZ": 0,
-          "CL_QUO_CT_SBZ": 0,
-          "CL_BOUND_CT_eQT": 0,
-          "CL_QUO_CT_eQT": 0,
-          "PL_BOUND_CT_ELINKS": 0,
-          "PL_QUO_CT_ELINKS": 0,
-          "PL_BOUND_CT_PLRANK": 0,
-          "PL_QUO_CT_PLRANK": 103,
-          "PL_BOUND_CT_eQTte": 50,
-          "PL_QUO_CT_eQTte": 288,
-          "PL_BOUND_CT_APPLIED": 0,
-          "PL_QUO_CT_APPLIED": 0,
-          "PL_BOUND_CT_TRANSACTNOW": 0,
-          "PL_QUO_CT_TRANSACTNOW": 0
+          "Policy_ID": "POL100000",
+          "Age": 56,
+          "Gender": "Male",
+          "BMI": 28.7,
+          "Smoking_Status": "Non-smoker",
+          "Region": "South",
+          "Diabetes": "No",
+          "Preexisting_Conditions": 1,
+          "Children": 4,
+          "Annual_Premium": 17339.48,
+          "Claimed_This_Year": "No",
+          "Chronic_Disease_Score": 7.67
         },
         {
-          "AGENCY_ID": 3,
-          "PRIMARY_AGENCY_ID": 3,
-          "PROD_ABBR": "BOILERMACH",
-          "PROD_LINE": "CL",
-          "STATE_ABBR": "IN",
-          "STAT_PROFILE_DATE_YEAR": 2006,
-          "RETENTION_POLY_QTY": 0,
-          "POLY_INFORCE_QTY": 0,
-          "PREV_POLY_INFORCE_QTY": 0,
-          "NB_WRTN_PREM_AMT": 151.0,
-          "WRTN_PREM_AMT": 6562.28,
-          "PREV_WRTN_PREM_AMT": 5438.55,
-          "PRD_ERND_PREM_AMT": 6433.44,
-          "PRD_INCRD_LOSSES_AMT": 0.0,
-          "MONTHS": 12,
-          "RETENTION_RATIO": 99999.0,
-          "LOSS_RATIO": 0.0,
-          "LOSS_RATIO_3YR": 0.69538969,
-          "GROWTH_RATE_3YR": 99999.0,
-          "AGENCY_APPOINTMENT_YEAR": 1957,
-          "ACTIVE_PRODUCERS": 14,
-          "MAX_AGE": 85,
-          "MIN_AGE": 48,
-          "VENDOR_IND": "N",
-          "VENDOR": "Unknown",
-          "PL_START_YEAR": 99999,
-          "PL_END_YEAR": 99999,
-          "COMMISIONS_START_YEAR": 99999,
-          "COMMISIONS_END_YEAR": 99999,
-          "CL_START_YEAR": 99999,
-          "CL_END_YEAR": 99999,
-          "ACTIVITY_NOTES_START_YEAR": 99999,
-          "ACTIVITY_NOTES_END_YEAR": 99999,
-          "CL_BOUND_CT_MDS": 0,
-          "CL_QUO_CT_MDS": 1,
-          "CL_BOUND_CT_SBZ": 0,
-          "CL_QUO_CT_SBZ": 0,
-          "CL_BOUND_CT_eQT": 0,
-          "CL_QUO_CT_eQT": 0,
-          "PL_BOUND_CT_ELINKS": 0,
-          "PL_QUO_CT_ELINKS": 0,
-          "PL_BOUND_CT_PLRANK": 0,
-          "PL_QUO_CT_PLRANK": 103,
-          "PL_BOUND_CT_eQTte": 50,
-          "PL_QUO_CT_eQTte": 288,
-          "PL_BOUND_CT_APPLIED": 0,
-          "PL_QUO_CT_APPLIED": 0,
-          "PL_BOUND_CT_TRANSACTNOW": 0,
-          "PL_QUO_CT_TRANSACTNOW": 0
+          "Policy_ID": "POL100001",
+          "Age": 69,
+          "Gender": "Female",
+          "BMI": 27.0,
+          "Smoking_Status": "Non-smoker",
+          "Region": "West",
+          "Diabetes": "No",
+          "Preexisting_Conditions": 0,
+          "Children": 0,
+          "Annual_Premium": 2637.6,
+          "Claimed_This_Year": "No",
+          "Chronic_Disease_Score": 6.15
         },
         {
-          "AGENCY_ID": 3,
-          "PRIMARY_AGENCY_ID": 3,
-          "PROD_ABBR": "BOILERMACH",
-          "PROD_LINE": "CL",
-          "STATE_ABBR": "IN",
-          "STAT_PROFILE_DATE_YEAR": 2007,
-          "RETENTION_POLY_QTY": 0,
-          "POLY_INFORCE_QTY": 0,
-          "PREV_POLY_INFORCE_QTY": 0,
-          "NB_WRTN_PREM_AMT": 40.0,
-          "WRTN_PREM_AMT": 6205.11,
-          "PREV_WRTN_PREM_AMT": 6562.28,
-          "PRD_ERND_PREM_AMT": 6357.09,
-          "PRD_INCRD_LOSSES_AMT": 0.0,
-          "MONTHS": 12,
-          "RETENTION_RATIO": 99999.0,
-          "LOSS_RATIO": 0.0,
-          "LOSS_RATIO_3YR": 0.472728542,
-          "GROWTH_RATE_3YR": 99999.0,
-          "AGENCY_APPOINTMENT_YEAR": 1957,
-          "ACTIVE_PRODUCERS": 14,
-          "MAX_AGE": 85,
-          "MIN_AGE": 48,
-          "VENDOR_IND": "N",
-          "VENDOR": "Unknown",
-          "PL_START_YEAR": 99999,
-          "PL_END_YEAR": 99999,
-          "COMMISIONS_START_YEAR": 99999,
-          "COMMISIONS_END_YEAR": 99999,
-          "CL_START_YEAR": 99999,
-          "CL_END_YEAR": 99999,
-          "ACTIVITY_NOTES_START_YEAR": 99999,
-          "ACTIVITY_NOTES_END_YEAR": 99999,
-          "CL_BOUND_CT_MDS": 0,
-          "CL_QUO_CT_MDS": 1,
-          "CL_BOUND_CT_SBZ": 0,
-          "CL_QUO_CT_SBZ": 0,
-          "CL_BOUND_CT_eQT": 0,
-          "CL_QUO_CT_eQT": 0,
-          "PL_BOUND_CT_ELINKS": 0,
-          "PL_QUO_CT_ELINKS": 0,
-          "PL_BOUND_CT_PLRANK": 0,
-          "PL_QUO_CT_PLRANK": 103,
-          "PL_BOUND_CT_eQTte": 50,
-          "PL_QUO_CT_eQTte": 288,
-          "PL_BOUND_CT_APPLIED": 0,
-          "PL_QUO_CT_APPLIED": 0,
-          "PL_BOUND_CT_TRANSACTNOW": 0,
-          "PL_QUO_CT_TRANSACTNOW": 0
+          "Policy_ID": "POL100002",
+          "Age": 46,
+          "Gender": "Male",
+          "BMI": 30.8,
+          "Smoking_Status": "Smoker",
+          "Region": "South",
+          "Diabetes": "No",
+          "Preexisting_Conditions": 2,
+          "Children": 4,
+          "Annual_Premium": 7922.92,
+          "Claimed_This_Year": "No",
+          "Chronic_Disease_Score": 14.38
         }
       ]
     }

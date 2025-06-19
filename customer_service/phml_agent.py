@@ -849,7 +849,7 @@ def auto_refresh_check():
 #     auto_refresh_check()
 
 # # Main chat interface
-chat_container = st.container()
+
 
 # # Display chat messages from history
 # with chat_container:
@@ -1057,6 +1057,7 @@ if st.session_state.routing_status["awaiting_human"]:
 
 # Main chat interface
 # Display chat messages from history
+chat_container = st.container()
 with chat_container:
     for i, message in enumerate(st.session_state.messages):
         with st.chat_message(message["role"]):
@@ -1080,38 +1081,60 @@ with chat_container:
                 agent_info = message["agent_info"]
                 if agent_info.get("timestamp"):
                     st.caption(f"Received: {agent_info['timestamp']}")
+st.markdown("""
+    <style>
+    .bottom-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        padding: 1rem;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+        z-index: 9999;
+    }
+    .spacer {
+        height: 150px; /* Prevent overlap */
+    }
+    </style>
+""", unsafe_allow_html=True)
 
-
-input_container = st.container()
-
-with input_container:
+st.markdown('<div class="bottom-container">', unsafe_allow_html=True)
+# input_container = st.container()
+# with input_container:
     # Create columns for text input and voice recording
-    text_col, voice_col = st.columns([4, 1])
-    
-    with text_col:
-        if st.session_state.routing_status["routed_to_human"]:
-            if st.session_state.routing_status["awaiting_human"]:
-                st.info("💬 **Chat with Human Agent** - Your messages will be forwarded to the assigned human agent.")
-                prompt = st.chat_input("Type your message to the human agent...")
-            else:
-                st.info("💬 **Connected to Human Agent** - Continue your conversation. All messages go directly to your assigned agent.")
-                prompt = st.chat_input("Continue chatting with your human agent...")
-        else:
-            # Normal chat input
-            prompt = st.chat_input("Ask me about PHML services, benefits, or any healthcare questions...")
-    
-    with voice_col:
-        st.markdown("**🎤 Voice**")
-        # Voice recording component
-        audio_bytes = audio_recorder(
-            text="",
-            recording_color="#e74c3c",
-            neutral_color="#34495e",
-            icon_name="microphone",
-            icon_size="1x",
-            pause_threshold=2.0,  # Stop recording after 2 seconds of silence
-            sample_rate=16000,
-        )
+# text_col, voice_col = st.columns([4, 1])
+
+# with text_col:
+if st.session_state.routing_status["routed_to_human"]:
+    if st.session_state.routing_status["awaiting_human"]:
+        st.info("💬 **Chat with Human Agent** - Your messages will be forwarded to the assigned human agent.")
+        prompt = st.chat_input("Type your message to the human agent...")
+    else:
+        st.info("💬 **Connected to Human Agent** - Continue your conversation. All messages go directly to your assigned agent.")
+        prompt = st.chat_input("Continue chatting with your human agent...")
+else:
+    # Normal chat input
+    prompt = st.chat_input("Ask me about PHML services, benefits, or any healthcare questions...")
+
+# with voice_col:
+text_col, voice_col = st.sidebar.columns([8, 4])
+with voice_col:
+    st.markdown("""
+        <div style='height:100%; display: flex; flex-direction: column; justify-content: flex-end;'>
+            <p style='margin: 0; font-weight: bold;'>🎤 Voice</p>
+        </div>
+    """, unsafe_allow_html=True)
+    # Voice recording component
+    audio_bytes = audio_recorder(
+        text="",
+        recording_color="#e74c3c",
+        neutral_color="#34495e",
+        icon_name="microphone",
+        icon_size="1x",
+        pause_threshold=2.0,  # Stop recording after 2 seconds of silence
+        sample_rate=16000,
+    )
 
 # Handle voice input
 voice_prompt = None

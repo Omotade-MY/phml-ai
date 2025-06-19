@@ -2,7 +2,7 @@ import pandas as pd
 import sqlite3
 import os
 import streamlit as st
-
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 from prompt import SYSTEM_PROMPT
 
 def store_file_in_sqlite(uploaded_file, db_path="store.db"):
@@ -127,6 +127,10 @@ from langgraph.graph import StateGraph
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from langgraph.graph.message import add_messages
 from langchain_core.tools import tool
+import pandas as pd
+from langgraph.graph import Graph,  START, END
+from langgraph.prebuilt import ToolNode
+from langgraph.graph import END, StateGraph
 
 class GraphState(TypedDict):
     messages: Annotated[list, add_messages]
@@ -136,10 +140,11 @@ class GraphState(TypedDict):
 
 
 
-import pandas as pd
-from langgraph.graph import Graph,  START, END
-from langgraph.prebuilt import ToolNode
-from langgraph.graph import END, StateGraph
+class QueryOutput(TypedDict):
+    """Generated SQL query."""
+
+    query: Annotated[str, ..., "Syntactically valid SQL query."]
+
 
 
 
@@ -251,14 +256,18 @@ def build_analyst(llm, checkpoint=None):
                 f"\n\nTop 10 rows:\n{pd.DataFrame(top_rows).to_markdown(index=False)}"
             )
 
-            new_msg = AIMessage(content=summary_text)
+            new_msg = ToolMessage(content=summary_text, 
+                                  name=tool_call["name"],
+                                  tool_call_id=tool_call["id"])
             return {
                 **state,
                 "messages": msgs + [new_msg]
             }
 
         except Exception as e:
-            err_msg = AIMessage(content=f"❌ SQL execution failed: {str(e)}")
+            err_msg = ToolMessage(content=f"❌ SQL execution failed: {str(e)}",
+                                  name=tool_call["name"],
+                                  tool_call_id=tool_call["id"])
             return {
                 **state,
                 "messages": msgs + [err_msg]

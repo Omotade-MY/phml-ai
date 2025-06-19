@@ -2,3 +2,8 @@
 langchain-core==0.3.65
 langgraph==0.4.8
 streamlit>=1.28.0
+
+# Plotting and Visualization Libraries
+plotly>=5.15.0
+matplotlib>=3.7.0
+seaborn>=0.12.0

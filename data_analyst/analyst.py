@@ -3,6 +3,7 @@ from langchain_core.messages import AIMessage
 import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 import sqlite3
+from langgraph.checkpoint.sqlite import SqliteSaver
 
 st.set_page_config(page_title="📊 PHML Data Analyst", layout="wide")
 from analysit_v2 import (
@@ -12,6 +13,7 @@ from analysit_v2 import (
     build_analyst
 )
 memconn = sqlite3.connect(":memory:", check_same_thread=False)
+memory = SqliteSaver(conn=memconn)
 
 if "question" not in st.session_state:
     st.session_state["question"] = None
