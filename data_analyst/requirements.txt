@@ -1,0 +1,4 @@
+# Analystst
+langchain-core==0.3.65
+langgraph==0.4.8
+streamlit>=1.28.0
